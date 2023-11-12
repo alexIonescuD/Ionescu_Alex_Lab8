@@ -10,9 +10,11 @@ using Ionescu_Alex_Lab2.Models;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ionescu_Alex_Lab2.Controllers
-{ }
+{
+    [Authorize(Policy = "SalesManager")]
     public class CustomersController : Controller
     {
         private readonly LibraryContext _context;
@@ -81,7 +83,7 @@ Customer customer)
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Unable to create record: { ex.Message}");
+                ModelState.AddModelError(string.Empty, $"Unable to create record: {ex.Message}");
             }
             return View(customer);
         }
@@ -155,14 +157,14 @@ Customer customer)
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"Unable to delete record:{ ex.Message}");
+                ModelState.AddModelError(string.Empty, $"Unable to delete record:{ex.Message}");
             }
             return View(customer);
         }
 
 
-    // POST: Customers/Delete/5
-    [HttpPost, ActionName("Delete")]
+        // POST: Customers/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -175,13 +177,14 @@ Customer customer)
             {
                 _context.Customers.Remove(customer);
             }
-            
+
             await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(int id)
         {
-          return (_context.Customers?.Any(e => e.CustomerID == id)).GetValueOrDefault();
+            return (_context.Customers?.Any(e => e.CustomerID == id)).GetValueOrDefault();
         }
     }
+}
